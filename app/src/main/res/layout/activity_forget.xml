@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".login.ForgetActivity"
+    android:background="@drawable/rd"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/back_layout" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/rd_layout" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dip"
+        android:orientation="vertical"
+        android:padding="10dip">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+
+            <com.cc.rd.custom.LoginEditText
+                android:id="@+id/forgetTel"
+                android:drawableLeft="@drawable/phone"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="10dip"
+                android:singleLine="true"
+                android:drawableRight="@drawable/clear"
+                android:hint="手机号码"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="5dip"
+            android:layout_marginTop="5dip"
+            android:background="#eeeeee" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.cc.rd.custom.LoginEditText
+                android:id="@+id/forgetCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="10dip"
+                android:singleLine="true"
+                android:drawableLeft="@drawable/code"
+                android:drawableRight="@drawable/clear"
+                android:layout_weight="2"
+                android:hint="验证码"/>
+
+            <Button
+                android:id="@+id/sendForgetCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorBule"
+                android:text="发送验证码"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="5dip"
+            android:layout_marginTop="5dip"
+            android:background="#eeeeee" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/forgetUser"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorBules"
+                android:text="找回密码"
+                android:textSize="25sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

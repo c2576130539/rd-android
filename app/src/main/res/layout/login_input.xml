@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dip"
+        android:orientation="vertical"
+        android:padding="10dip" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+
+            <com.cc.rd.custom.LoginEditText
+                android:id="@+id/telphone"
+                android:drawableLeft="@drawable/phone"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="10dip"
+                android:singleLine="true"
+                android:drawableRight="@drawable/clear"
+                android:hint="手机号码"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="5dip"
+            android:layout_marginTop="5dip"
+            android:background="#eeeeee" />
+
+        <LinearLayout
+            android:id="@+id/input_layout_psw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+
+            <com.cc.rd.custom.LoginEditText
+                android:id="@+id/password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="10dip"
+                android:singleLine="true"
+                android:password="true"
+                android:layout_weight="4"
+                android:drawableLeft="@drawable/lock"
+                android:drawableRight="@drawable/clear"
+                android:hint="密码" />
+
+            <ImageButton
+                android:id="@+id/visablePwd"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="#00000000"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="5dip"
+            android:layout_marginTop="5dip"
+            android:background="#eeeeee" />
+
+        <LinearLayout
+            android:id="@+id/codeView"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.cc.rd.custom.LoginEditText
+                android:id="@+id/code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="10dip"
+                android:singleLine="true"
+                android:drawableLeft="@drawable/code"
+                android:drawableRight="@drawable/clear"
+                android:layout_weight="4"
+                android:hint="验证码"/>
+
+            <ImageView
+                android:id="@+id/codeImage"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="3" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="5dip"
+            android:layout_marginTop="5dip"
+            android:background="#eeeeee" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/loginBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorBule"
+                android:text="登陆"
+                android:textSize="25sp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="5dip"
+            android:layout_marginTop="5dip"
+            android:background="#eeeeee" />
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            
+            <TextView
+                android:id="@+id/forgetPwd"
+                android:clickable="true"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="忘记密码?"
+                android:textStyle="bold"
+                android:textColor="@color/colorBules"/>
+
+            <TextView
+                android:id="@+id/register"
+                android:clickable="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="注册"
+                android:textStyle="bold"
+                android:textColor="@color/colorBules"
+                android:gravity="right"/>
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>
