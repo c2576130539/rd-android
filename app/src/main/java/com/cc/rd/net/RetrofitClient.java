@@ -1,9 +1,12 @@
 package com.cc.rd.net;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.cc.rd.BuildConfig;
+import com.cc.rd.MyApplication;
 import com.cc.rd.custom.ResponseConverterFactory;
+import com.cc.rd.util.SharedPreferencesUtils;
 
 import java.io.IOException;
 
@@ -20,9 +23,6 @@ public class RetrofitClient {
     private static volatile RetrofitClient instance;
     private APIService apiService;
     private String baseUrl = BuildConfig.SERVER_URL;
-
-    private RetrofitClient() {
-    }
 
     public static RetrofitClient getInstance() {
         if (instance == null) {
@@ -47,7 +47,7 @@ public class RetrofitClient {
                 Request original = chain.request();
                 Request.Builder requestBuilder = original.newBuilder()
                         //添加Token
-                        .header("token", "");
+                        .header("Authorization", SharedPreferencesUtils.getToken());
                 Request request = requestBuilder.build();
                 return chain.proceed(request);
             }

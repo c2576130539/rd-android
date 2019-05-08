@@ -115,7 +115,7 @@
                 android:id="@+id/loginBtn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorBule"
+                android:background="@drawable/button_shape"
                 android:text="登陆"
                 android:textSize="25sp"/>
         </LinearLayout>

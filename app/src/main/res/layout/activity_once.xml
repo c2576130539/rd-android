@@ -5,7 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/rd"
     tools:context=".login.OnceActivity">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/margin_80">
+    </LinearLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_avater"
@@ -17,11 +23,11 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/margin_80">
+        android:layout_height="@dimen/margin_50">
     </LinearLayout>
 
     <RadioGroup
-        android:id="@+id/genderRadioGroup"
+        android:id="@+id/gender_radio_group"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
@@ -45,15 +51,47 @@
 
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/margin_100">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dip"
+        android:orientation="vertical"
+        android:padding="10dip" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+
+            <com.cc.rd.custom.LoginEditText
+                android:id="@+id/user_nickname"
+                android:drawableLeft="@drawable/icon_user"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="10dip"
+                android:singleLine="true"
+                android:drawableRight="@drawable/clear"
+                android:hint="昵称"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
-    <com.spark.submitbutton.SubmitButton
-        android:id="@+id/once_btn"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:onClick="onceBtn"
-        android:text="完成"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="20dip">
+
+        <Button
+            android:id="@+id/once_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/button_shape"
+            android:text="完成"
+            android:textSize="25sp"/>
+
+    </LinearLayout>
 
 </LinearLayout>

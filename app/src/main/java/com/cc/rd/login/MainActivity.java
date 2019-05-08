@@ -22,10 +22,14 @@ import com.cc.rd.bean.request.user.LoginRequest;
 import com.cc.rd.mvp.contract.login.MainContract;
 import com.cc.rd.custom.LoginEditText;
 import com.cc.rd.mvp.presenter.user.MainPresenter;
+import com.cc.rd.ui.HomeActivity;
 import com.cc.rd.util.CatpchaUtils;
 import com.cc.rd.util.ErrorCodeEnum;
 import com.cc.rd.util.ExceptionEngine;
+import com.cc.rd.util.MD5Utils;
+import com.cc.rd.util.ParamUtils;
 import com.cc.rd.util.ProgressDialog;
+import com.cc.rd.util.SharedPreferencesUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,6 +59,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private String captchaCode;
     private String token;
 
+    private int flag = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +82,18 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     private void init() {
 
+        Intent i = getIntent();
+        String telphone = i.getStringExtra("telphone");
+        String password = i.getStringExtra("password");
+        if (ParamUtils.isNotNull(telphone)) {
+            inputTelphone.setText(telphone);
+            inputPassword.setText(password);
+        } else {
+            telphone = SharedPreferencesUtils.getTelphone();
+            password = SharedPreferencesUtils.getPassword();
+            inputTelphone.setText(SharedPreferencesUtils.getTelphone());
+            inputPassword.setText(SharedPreferencesUtils.getPassword());
+        }
         imageButton.setImageDrawable(getResources().getDrawable(R.drawable.invisible));
         //密码是否可见
         imageButton.setOnTouchListener(new View.OnTouchListener() {
@@ -83,17 +101,26 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     //重新设置按下时的背景图片
-                    ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.visible));
-                    inputPassword.setTransformationMethod(HideReturnsTransformationMethod
-                            .getInstance());
-                    return false;
-                }else {
+                    if (flag == 0) {
+                        flag = 1;
+                        ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.visible));
+                        inputPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    } else {
+                        flag = 0;
+                        ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.invisible));
+                        inputPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    }
+
+                }
+                return false;
+                /*
+                else {
                     //再修改为抬起时的正常图片
                     ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.invisible));
-                    inputPassword.setTransformationMethod(PasswordTransformationMethod
-                            .getInstance());
+                    inputPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
                     return false;
                 }
+                */
             }
         });
         //忘记密码
@@ -149,7 +176,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             loginRequest.setCode(code.getText().toString());
         }
         loginRequest.setTelphone(inputTelphone.getText().toString());
-        loginRequest.setPassword(inputPassword.getText().toString());
+        loginRequest.setPassword(MD5Utils.encodeMD5(inputPassword.getText().toString()));
         mPresenter.login(loginRequest);
     }
 
@@ -160,7 +187,17 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     public void onSuccess(JSONResult<UserLoginVo> bean) {
         UserLoginVo userLoginVo = bean.getResult();
+        SharedPreferencesUtils.saveUserData(userLoginVo);
+        SharedPreferencesUtils.saveUserPwd(inputPassword.getText().toString());
         Toast.makeText(this, userLoginVo.getTelphone(), Toast.LENGTH_LONG).show();
+        //是否第一次登陆
+        if (ParamUtils.isEmpty(userLoginVo.getUserImage())) {
+            Intent i = new Intent(this, OnceActivity.class);
+            startActivity(i);
+        } else {
+            Intent i = new Intent(this, HomeActivity.class);
+            startActivity(i);
+        }
     }
 
     /**
@@ -189,7 +226,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     public void onError(Throwable throwable) {
         int code = ExceptionEngine.handleException(throwable).code;
         //密码错误则显示验证码
-        if (ErrorCodeEnum.USER_PASSWORD_ERROR.getCode() == code) {
+        if (ErrorCodeEnum.USER_PASSWORD_ERROR.getCode() == code || ErrorCodeEnum.CAPTCHA_CODE_NOT_NULL.getCode() == code) {
             mPresenter.getCaptcha();
         }
         Toast.makeText(this, ExceptionEngine.handleException(throwable).message, Toast.LENGTH_LONG).show();

@@ -16,6 +16,8 @@ import com.cc.rd.bean.request.user.ResetPasswordRequest;
 import com.cc.rd.custom.LoginEditText;
 import com.cc.rd.mvp.contract.login.ForgetPwdContract;
 import com.cc.rd.mvp.presenter.user.ForgetPwdPresenter;
+import com.cc.rd.util.ExceptionEngine;
+import com.cc.rd.util.ProgressDialog;
 import com.cc.rd.util.Result;
 import com.uber.autodispose.AutoDisposeConverter;
 
@@ -141,17 +143,18 @@ public class ResetPwdActivity extends BaseMvpActivity<ForgetPwdPresenter> implem
 
     @Override
     public void showLoading() {
-
+        ProgressDialog.getInstance().show(this);
     }
 
     @Override
     public void hideLoading() {
-
+        ProgressDialog.getInstance().dismiss();
     }
+
 
     @Override
     public void onError(Throwable throwable) {
-
+        Toast.makeText(this, ExceptionEngine.handleException(throwable).message, Toast.LENGTH_LONG).show();
     }
 
     @Override

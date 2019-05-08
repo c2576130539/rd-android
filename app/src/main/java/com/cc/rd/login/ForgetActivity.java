@@ -15,6 +15,7 @@ import com.cc.rd.custom.LoginEditText;
 import com.cc.rd.mvp.contract.login.SendCodeContract;
 import com.cc.rd.mvp.presenter.user.SendCodePresenter;
 import com.cc.rd.util.ExceptionEngine;
+import com.cc.rd.util.ProgressDialog;
 import com.cc.rd.util.Result;
 
 import butterknife.BindView;
@@ -116,12 +117,12 @@ public class ForgetActivity extends BaseMvpActivity<SendCodePresenter> implement
 
     @Override
     public void showLoading() {
-
+        ProgressDialog.getInstance().show(this);
     }
 
     @Override
     public void hideLoading() {
-
+        ProgressDialog.getInstance().dismiss();
     }
 
     @Override

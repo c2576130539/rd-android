@@ -30,6 +30,7 @@ public class UpdatePresenter extends BasePresenter<UpdateContract.View> implemen
                 .subscribe(new Consumer<Result>() {
                     @Override
                     public void accept(Result result) throws Exception {
+                        mView.onSuccess(result);
                         mView.hideLoading();
                     }
                 }, new Consumer<Throwable>() {

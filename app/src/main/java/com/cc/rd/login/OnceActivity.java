@@ -9,28 +9,46 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.cc.rd.MyApplication;
 import com.cc.rd.R;
 import com.cc.rd.base.BaseMvpActivity;
+import com.cc.rd.bean.JSONResult;
+import com.cc.rd.bean.request.user.UserUpdateRequest;
+import com.cc.rd.bean.vo.FileVO;
 import com.cc.rd.callback.PhotoCallBack;
+import com.cc.rd.custom.LoginEditText;
+import com.cc.rd.enums.Constant;
+import com.cc.rd.enums.GenderEnum;
 import com.cc.rd.mvp.contract.login.UpdateContract;
 import com.cc.rd.mvp.presenter.user.UpdatePresenter;
+import com.cc.rd.ui.HomeActivity;
+import com.cc.rd.util.ErrorCodeEnum;
+import com.cc.rd.util.ExceptionEngine;
 import com.cc.rd.util.FileUtils;
+import com.cc.rd.util.ParamUtils;
+import com.cc.rd.util.ProgressDialog;
 import com.cc.rd.util.Result;
+import com.cc.rd.util.SharedPreferencesUtils;
 import com.cc.rd.view.AlertView;
-import com.spark.submitbutton.SubmitButton;
+import com.google.gson.Gson;
 import com.tbruyelle.rxpermissions.RxPermissions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,14 +58,30 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import github.ishaan.buttonprogressbar.ButtonProgressBar;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import rx.functions.Action1;
 
 public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements UpdateContract.View  {
 
     @BindView(R.id.iv_avater)
-    private CircleImageView ivAvater;
+    CircleImageView ivAvater;
 
-    @BindView(R.id.genderRadioGroup)
-    private RadioGroup radioGroup;
+    @BindView(R.id.gender_radio_group)
+    RadioGroup radioGroup;
+
+    @BindView(R.id.user_nickname)
+    LoginEditText editText;
+
+    @BindView(R.id.once_btn)
+    Button bar;
 
     private String gender;
 
@@ -62,6 +96,19 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
     private static final String READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
 
+    private String userImage;
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_once;
+    }
+
+    @Override
+    public void initView() {
+        mPresenter = new UpdatePresenter();
+        mPresenter.attachView(this);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,12 +117,6 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
     }
 
     private void init() {
-        ivAvater.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeAvater();
-            }
-        });
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -87,10 +128,32 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
                 gender = rb.getText().toString();
             }
         });
-    }
 
-    public void onceBtn(View view) {
-        Toast.makeText(OnceActivity.this, gender, Toast.LENGTH_LONG).show();
+        ivAvater.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeAvater();
+            }
+        });
+
+        bar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (TextUtils.isEmpty(editText.getText())) {
+                    Toast.makeText(OnceActivity.this, "昵称不允许为空", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                UserUpdateRequest request = new UserUpdateRequest();
+                request.setGender(GenderEnum.findByCDesc(gender) == null ? GenderEnum.GIRL.getCode(): GenderEnum.findByCDesc(gender).getCode());
+                request.setNickName(editText.getText().toString());
+                if (ParamUtils.isEmpty(userImage)) {
+                    request.setUserImage(Constant.USER_IMAGER);
+                } else {
+                    request.setUserImage(userImage);
+                }
+                mPresenter.changeUserImage(request);
+            }
+        });
     }
 
     private void changeAvater(){
@@ -98,14 +161,7 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
             @Override
             public void doSuccess(String path) {
                 //将图片传给服务器
-//                File file = new File(path);
-//                RequestBody imageBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-//                MultipartBody.Builder builder = new MultipartBody.Builder()
-//                        .setType(MultipartBody.FORM)//表单类型
-//                        .addFormDataPart("id", SaveUserInfo.getUid());
-//                builder.addFormDataPart("head_portrait", file.getName(), imageBody);
-//                List<MultipartBody.Part> partList=builder.build().parts();
-//                mPresenter.startUpdateHeadRequest(partList,SaveUserInfo.getUid());
+                uploadMultiFile();
             }
 
             @Override
@@ -221,7 +277,7 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
 
                 photoUri = Uri.fromFile(file);
                 if (Build.VERSION.SDK_INT >= 24) {
-                    photoUri = FileProvider.getUriForFile(this,"com.barnettwong.changeavaterview.fileProvider", file);
+                    photoUri = FileProvider.getUriForFile(this,"com.cc.rd.login.fileProvider", file);
                 } else {
                     photoUri = Uri.fromFile(file);
                 }
@@ -300,34 +356,78 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
     }
 
     @Override
-    public int getLayoutId() {
-        return R.layout.activity_main;
-    }
-
-    @Override
-    public void initView() {
-        mPresenter = new UpdatePresenter();
-        mPresenter.attachView(this);
-
-    }
-
-    @Override
     public void onSuccess(Result result) {
+        Toast.makeText(OnceActivity.this, "欢迎", Toast.LENGTH_LONG).show();
+        Intent i = new Intent(OnceActivity.this, HomeActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
 
     }
 
     @Override
     public void showLoading() {
-
+        ProgressDialog.getInstance().show(this);
     }
 
     @Override
     public void hideLoading() {
-
+        ProgressDialog.getInstance().dismiss();
     }
 
     @Override
     public void onError(Throwable throwable) {
+        int code = ExceptionEngine.handleException(throwable).code;
+        Toast.makeText(this, ExceptionEngine.handleException(throwable).message, Toast.LENGTH_LONG).show();
+        if (code == ErrorCodeEnum.NOT_AUTH.getCode()) {
+            Intent i = new Intent(this, MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+        }
+    }
 
+    private void uploadMultiFile() {
+        String imageType = "multipart/form-data";
+        File file = new File(path);//imgUrl为图片位置
+        RequestBody fileBody = RequestBody.create(MediaType.parse("image/jpg"), file);
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", "head_image", fileBody)
+                .addFormDataPart("imagetype", imageType)
+                .build();
+        Request request = new Request.Builder()
+                .url(Constant.url)
+                .post(requestBody)
+                .addHeader("Authorization", SharedPreferencesUtils.getToken())
+                .build();
+        final okhttp3.OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
+        OkHttpClient okHttpClient = httpBuilder
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String htmlStr = response.body().string();
+                Log.i("result", htmlStr);
+                try {
+                    JSONObject object = new JSONObject(htmlStr);
+                    int code = object.getInt("code");
+                    if (code == 200) {
+                        //上传成功
+                        Gson gson = new Gson();
+                        FileVO fileVO = gson.fromJson(object.getString("result"), FileVO.class);
+                        userImage = fileVO.getHash();
+                    } else if (code == ErrorCodeEnum.NOT_AUTH.getCode()) {
+                        Intent i = new Intent(OnceActivity.this, MainActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

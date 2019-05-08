@@ -19,6 +19,8 @@ import com.cc.rd.bean.request.user.UserAddRequest;
 import com.cc.rd.custom.LoginEditText;
 import com.cc.rd.mvp.contract.login.RegisterContract;
 import com.cc.rd.mvp.presenter.user.RegisterPresenter;
+import com.cc.rd.util.ExceptionEngine;
+import com.cc.rd.util.ProgressDialog;
 import com.cc.rd.util.Result;
 
 import butterknife.BindView;
@@ -40,6 +42,8 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
 
     @BindView(R.id.registerCode)
     Button codeBtn;
+
+    private int flag = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,17 +80,22 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     //重新设置按下时的背景图片
-                    ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.visible));
-                    registerPwd.setTransformationMethod(HideReturnsTransformationMethod
-                            .getInstance());
-                    return false;
-                }else {
-                    //再修改为抬起时的正常图片
-                    ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.invisible));
-                    registerPwd.setTransformationMethod(PasswordTransformationMethod
-                            .getInstance());
-                    return false;
+                    if (flag == 0) {
+                        flag = 1;
+                        registerVPwd.setImageDrawable(getResources().getDrawable(R.drawable.visible));
+                        registerPwd.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                        registerCVPwd.setImageDrawable(getResources().getDrawable(R.drawable.visible));
+                        registerCPwd.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    } else {
+                        flag = 0;
+                        registerVPwd.setImageDrawable(getResources().getDrawable(R.drawable.invisible));
+                        registerPwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                        registerCVPwd.setImageDrawable(getResources().getDrawable(R.drawable.invisible));
+                        registerCPwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    }
+
                 }
+                return false;
             }
         });
         registerCVPwd.setOnTouchListener(new View.OnTouchListener() {
@@ -94,17 +103,22 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     //重新设置按下时的背景图片
-                    ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.visible));
-                    registerCPwd.setTransformationMethod(HideReturnsTransformationMethod
-                            .getInstance());
-                    return false;
-                }else {
-                    //再修改为抬起时的正常图片
-                    ((ImageButton)v).setImageDrawable(getResources().getDrawable(R.drawable.invisible));
-                    registerCPwd.setTransformationMethod(PasswordTransformationMethod
-                            .getInstance());
-                    return false;
+                    if (flag == 0) {
+                        flag = 1;
+                        registerVPwd.setImageDrawable(getResources().getDrawable(R.drawable.visible));
+                        registerPwd.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                        registerCVPwd.setImageDrawable(getResources().getDrawable(R.drawable.visible));
+                        registerCPwd.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    } else {
+                        flag = 0;
+                        registerVPwd.setImageDrawable(getResources().getDrawable(R.drawable.invisible));
+                        registerPwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                        registerCVPwd.setImageDrawable(getResources().getDrawable(R.drawable.invisible));
+                        registerCPwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    }
+
                 }
+                return false;
             }
         });
 
@@ -207,6 +221,7 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
      */
     @Override
     public void onSuccess(Result result) {
+        Toast.makeText(this, "注册成功", Toast.LENGTH_LONG).show();
         Intent i = new Intent(this, MainActivity.class);
         i.putExtra("telphone", telphone);
         i.putExtra("password", pwd);
@@ -216,16 +231,16 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
 
     @Override
     public void showLoading() {
-
+        ProgressDialog.getInstance().show(this);
     }
 
     @Override
     public void hideLoading() {
-
+        ProgressDialog.getInstance().dismiss();
     }
 
     @Override
     public void onError(Throwable throwable) {
-
+        Toast.makeText(this, ExceptionEngine.handleException(throwable).message, Toast.LENGTH_LONG).show();
     }
 }

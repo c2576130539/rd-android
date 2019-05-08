@@ -104,7 +104,7 @@
                 android:id="@+id/forgetUser"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorBules"
+                android:background="@drawable/button_shape"
                 android:text="找回密码"
                 android:textSize="25sp"/>
         </LinearLayout>

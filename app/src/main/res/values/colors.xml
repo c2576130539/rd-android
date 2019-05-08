@@ -9,6 +9,7 @@
     <color name="colorBule">#5f9cf1</color>
     <color name="colorBules">#076af4</color>
     <color name="code">#4EB84A</color>
+    <color name="color_black">#000000</color>
 
     <!--覆盖颜色-->
     <color name="bgColor_overlay">#60000000</color>
