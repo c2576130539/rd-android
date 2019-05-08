@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -13,12 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cc.rd.DemoHelper;
 import com.cc.rd.R;
 import com.cc.rd.base.BaseMvpActivity;
 import com.cc.rd.bean.JSONResult;
 import com.cc.rd.bean.vo.CaptchaVO;
 import com.cc.rd.bean.vo.UserLoginVo;
 import com.cc.rd.bean.request.user.LoginRequest;
+import com.cc.rd.db.DemoDBManager;
 import com.cc.rd.mvp.contract.login.MainContract;
 import com.cc.rd.custom.LoginEditText;
 import com.cc.rd.mvp.presenter.user.MainPresenter;
@@ -30,6 +33,8 @@ import com.cc.rd.util.MD5Utils;
 import com.cc.rd.util.ParamUtils;
 import com.cc.rd.util.ProgressDialog;
 import com.cc.rd.util.SharedPreferencesUtils;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,6 +61,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @BindView(R.id.codeImage)
     ImageView codeImage;
 
+    private static final String TAG = "MainActivity";
+
     private String captchaCode;
     private String token;
 
@@ -64,6 +71,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (DemoHelper.getInstance().isLoggedIn()) {
+            startActivity(new Intent(this, HomeActivity.class));
+            finish();
+            return;
+        }
         ButterKnife.bind(this);
         init();
     }
@@ -191,12 +203,43 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         SharedPreferencesUtils.saveUserPwd(inputPassword.getText().toString());
         Toast.makeText(this, userLoginVo.getTelphone(), Toast.LENGTH_LONG).show();
         //是否第一次登陆
+        DemoDBManager.getInstance().closeDB();
+        DemoHelper.getInstance().setCurrentUserName(userLoginVo.getTelphone());
         if (ParamUtils.isEmpty(userLoginVo.getUserImage())) {
             Intent i = new Intent(this, OnceActivity.class);
             startActivity(i);
         } else {
-            Intent i = new Intent(this, HomeActivity.class);
-            startActivity(i);
+            //login
+            EMClient.getInstance().login(inputTelphone.getText().toString(), inputPassword.getText().toString(), new EMCallBack() {
+
+                @Override
+                public void onSuccess() {
+                    Log.d(TAG, "login: onSuccess");
+
+                    // ** manually load all local groups and conversation
+                    EMClient.getInstance().groupManager().loadAllGroups();
+                    EMClient.getInstance().chatManager().loadAllConversations();
+
+                    DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
+
+                    startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                    finish();
+                }
+
+                @Override
+                public void onProgress(int progress, String status) {
+
+                }
+
+                @Override
+                public void onError(int code, String error) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "login failed", 0).show();
+                        }
+                    });
+                }
+            });
         }
     }
 

@@ -46,6 +46,16 @@ public class SharedPreferencesUtils {
         return password;
     }
 
+    /**
+     * 获取用户昵称
+     * @return
+     */
+    public static String getNickName() {
+        SharedPreferences sp = context.getSharedPreferences("user_data", Context.MODE_PRIVATE);
+        String nickName = sp.getString("nickName", null);
+        return nickName;
+    }
+
     public static void saveUserData(UserLoginVo userLoginVo) {
         SharedPreferences sp = context.getSharedPreferences("user_data", Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = sp.edit();

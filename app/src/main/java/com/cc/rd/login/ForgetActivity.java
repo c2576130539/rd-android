@@ -15,6 +15,7 @@ import com.cc.rd.custom.LoginEditText;
 import com.cc.rd.mvp.contract.login.SendCodeContract;
 import com.cc.rd.mvp.presenter.user.SendCodePresenter;
 import com.cc.rd.util.ExceptionEngine;
+import com.cc.rd.util.ParamUtils;
 import com.cc.rd.util.ProgressDialog;
 import com.cc.rd.util.Result;
 
@@ -60,6 +61,13 @@ public class ForgetActivity extends BaseMvpActivity<SendCodePresenter> implement
             forgetTel.setShakeAnimation();
             //设置提示
             Toast.makeText(this, R.string.user_not_null, Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (!ParamUtils.isRightTel(forgetTel.getText().toString())) {
+            //设置晃动
+            forgetTel.setShakeAnimation();
+            //设置提示
+            Toast.makeText(this, "无效手机号码", Toast.LENGTH_LONG).show();
             return;
         }
         mPresenter.sendOldCode(forgetTel.getText().toString());

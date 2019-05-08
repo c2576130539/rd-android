@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.cc.rd.DemoHelper;
 import com.cc.rd.R;
 import com.cc.rd.base.BaseMvpActivity;
 import com.cc.rd.bean.request.user.UserAddRequest;
@@ -20,8 +21,13 @@ import com.cc.rd.custom.LoginEditText;
 import com.cc.rd.mvp.contract.login.RegisterContract;
 import com.cc.rd.mvp.presenter.user.RegisterPresenter;
 import com.cc.rd.util.ExceptionEngine;
+import com.cc.rd.util.ParamUtils;
 import com.cc.rd.util.ProgressDialog;
 import com.cc.rd.util.Result;
+import com.cc.rd.util.SharedPreferencesUtils;
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -136,6 +142,13 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
             Toast.makeText(this, R.string.user_not_null, Toast.LENGTH_LONG).show();
             return;
         }
+        if (!ParamUtils.isRightTel(registerTel.getText().toString())) {
+            //设置晃动
+            registerTel.setShakeAnimation();
+            //设置提示
+            Toast.makeText(this, "无效手机号码", Toast.LENGTH_LONG).show();
+            return;
+        }
         mPresenter.sendNewCode(registerTel.getText().toString());
 
         new CountDownTimer(60*1000, 1000) {
@@ -221,12 +234,37 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
      */
     @Override
     public void onSuccess(Result result) {
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    // call method in SDK
+                    EMClient.getInstance().createAccount(telphone, pwd);
+                    DemoHelper.getInstance().setCurrentUserName(telphone);
+                } catch (final HyphenateException e) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            int errorCode=e.getErrorCode();
+                            if(errorCode== EMError.NETWORK_ERROR){
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.network_anomalies), Toast.LENGTH_SHORT).show();
+                            }else if(errorCode == EMError.USER_ALREADY_EXIST){
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.User_already_exists), Toast.LENGTH_SHORT).show();
+                            }else if(errorCode == EMError.USER_ILLEGAL_ARGUMENT){
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.illegal_user_name),Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+        }).start();
+
         Toast.makeText(this, "注册成功", Toast.LENGTH_LONG).show();
         Intent i = new Intent(this, MainActivity.class);
         i.putExtra("telphone", telphone);
         i.putExtra("password", pwd);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
+        finish();
     }
 
     @Override

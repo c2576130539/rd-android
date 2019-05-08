@@ -22,6 +22,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.cc.rd.DemoHelper;
 import com.cc.rd.MyApplication;
 import com.cc.rd.R;
 import com.cc.rd.base.BaseMvpActivity;
@@ -44,6 +45,10 @@ import com.cc.rd.util.Result;
 import com.cc.rd.util.SharedPreferencesUtils;
 import com.cc.rd.view.AlertView;
 import com.google.gson.Gson;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import org.json.JSONArray;
@@ -357,10 +362,42 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
 
     @Override
     public void onSuccess(Result result) {
-        Toast.makeText(OnceActivity.this, "欢迎", Toast.LENGTH_LONG).show();
-        Intent i = new Intent(OnceActivity.this, HomeActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
+        //login
+        EMClient.getInstance().login(SharedPreferencesUtils.getTelphone(), SharedPreferencesUtils.getPassword(), new EMCallBack() {
+
+            @Override
+            public void onSuccess() {
+                // ** manually load all local groups and conversation
+                EMClient.getInstance().groupManager().loadAllGroups();
+                EMClient.getInstance().chatManager().loadAllConversations();
+
+                // update current user's display name for APNs
+                boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(editText.getText().toString());
+                if (!updatenick) {
+                    Log.e("LoginActivity", "update current user nick fail");
+                }
+
+                DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
+
+                Toast.makeText(OnceActivity.this, "欢迎", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(OnceActivity.this, HomeActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onProgress(int progress, String status) {
+
+            }
+
+            @Override
+            public void onError(int code, String error) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "login failed", 0).show();
+                    }
+                });
+            }
+        });
 
     }
 

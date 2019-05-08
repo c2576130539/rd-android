@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
@@ -10,21 +12,22 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+        multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //buildConfigField('String', 'SERVER_URL', '\"http://192.168.0.10:8080\"')
-            buildConfigField('String', 'SERVER_URL', '\"http://192.168.43.147:8080\"')
-            //buildConfigField('String', 'SERVER_URL', '\"http://192.168.2.101:8080\"')
+            //buildConfigField('String', 'SERVER_URL', '\"http://192.168.43.147:8080\"')
+            buildConfigField('String', 'SERVER_URL', '\"http://192.168.2.103:8080\"')
         }
 
         debug {
             minifyEnabled false
             //buildConfigField('String', 'SERVER_URL', '\"http://192.168.0.10:8080\"')
-            buildConfigField('String', 'SERVER_URL', '\"http://192.168.43.147:8080\"')
-            //buildConfigField('String', 'SERVER_URL', '\"http://192.168.2.101:8080\"')
+            //buildConfigField('String', 'SERVER_URL', '\"http://192.168.43.147:8080\"')
+            buildConfigField('String', 'SERVER_URL', '\"http://192.168.2.103:8080\"')
         }
     }
     compileOptions {
@@ -71,4 +74,10 @@ dependencies {
     //lombok
     implementation 'javax.annotation:javax.annotation-api:1.2'
     implementation 'org.projectlombok:lombok:1.16.8'
+    //easeui
+    implementation project(path: ':easeui')
+    //parse
+    implementation 'com.parse:parse-android:1.17.3'
+    //kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.71"
 }
