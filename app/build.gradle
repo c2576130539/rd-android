@@ -18,21 +18,28 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField('String', 'SERVER_URL', '\"http://192.168.0.11:8080\"')
+            //buildConfigField('String', 'SERVER_URL', '\"http://192.168.0.11:8080\"')
             //buildConfigField('String', 'SERVER_URL', '\"http://192.168.43.147:8080\"')
-            //buildConfigField('String', 'SERVER_URL', '\"http://192.168.2.105:8080\"')
+            buildConfigField('String', 'SERVER_URL', '\"http://192.168.2.109:8080\"')
         }
 
         debug {
             minifyEnabled false
-            buildConfigField('String', 'SERVER_URL', '\"http://192.168.0.11:8080\"')
+            //buildConfigField('String', 'SERVER_URL', '\"http://192.168.0.11:8080\"')
             //buildConfigField('String', 'SERVER_URL', '\"http://192.168.43.147:8080\"')
-            //buildConfigField('String', 'SERVER_URL', '\"http://192.168.2.105:8080\"')
+            buildConfigField('String', 'SERVER_URL', '\"http://192.168.2.109:8080\"')
         }
     }
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+        //…
     }
 }
 
@@ -79,5 +86,6 @@ dependencies {
     //parse
     implementation 'com.parse:parse-android:1.17.3'
     //kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.71"
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.71'
+    implementation files('libs/AMap3DMap_6.8.0_AMapNavi_6.7.0_AMapSearch_6.5.0_AMapLocation_4.6.0_20190423.jar')
 }

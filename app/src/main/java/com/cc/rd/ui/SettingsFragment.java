@@ -4,6 +4,7 @@ import com.cc.rd.bean.vo.UserLoginVo;
 import com.cc.rd.enums.Constant;
 import com.cc.rd.enums.GenderEnum;
 import com.cc.rd.login.MainActivity;
+import com.cc.rd.ui.order.CreateOrderActivity;
 import com.cc.rd.util.ErrorCodeEnum;
 import com.cc.rd.util.ParamUtils;
 import com.cc.rd.util.SharedPreferencesUtils;
@@ -120,6 +121,13 @@ public class SettingsFragment extends Fragment{
                 Toast.makeText(getContext(), "修改用户信息", Toast.LENGTH_LONG).show();
                 Intent i = new Intent(getActivity(), UpdateUserActivity.class);
                 startActivity(i);
+            }
+        });
+
+        setting.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), CreateOrderActivity.class));
             }
         });
 
