@@ -32,6 +32,11 @@ public class ParamUtils {
         return string == null || string.length() == 0;
     }
 
+    /**
+     * 校验手机号码格式
+     * @param telphone
+     * @return
+     */
     public static boolean isRightTel(String telphone) {
         // 编译正则表达式
         Pattern pattern = Pattern.compile(Constant.DEFAULT_TELPHONE);

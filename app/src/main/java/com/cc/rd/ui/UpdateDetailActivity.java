@@ -1,4 +1,4 @@
-package com.cc.rd.login;
+package com.cc.rd.ui;
 
 import android.Manifest;
 import android.content.Context;
@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -22,48 +22,40 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.cc.rd.DemoHelper;
-import com.cc.rd.MyApplication;
 import com.cc.rd.R;
 import com.cc.rd.base.BaseMvpActivity;
-import com.cc.rd.bean.JSONResult;
 import com.cc.rd.bean.request.user.UserUpdateRequest;
 import com.cc.rd.bean.vo.FileVO;
 import com.cc.rd.callback.PhotoCallBack;
 import com.cc.rd.custom.LoginEditText;
 import com.cc.rd.enums.Constant;
 import com.cc.rd.enums.GenderEnum;
+import com.cc.rd.login.MainActivity;
 import com.cc.rd.mvp.contract.login.UpdateContract;
 import com.cc.rd.mvp.presenter.user.UpdatePresenter;
-import com.cc.rd.ui.HomeActivity;
 import com.cc.rd.util.ErrorCodeEnum;
 import com.cc.rd.util.ExceptionEngine;
 import com.cc.rd.util.FileUtils;
-import com.cc.rd.util.ParamUtils;
 import com.cc.rd.util.ProgressDialog;
 import com.cc.rd.util.Result;
 import com.cc.rd.util.SharedPreferencesUtils;
 import com.cc.rd.view.AlertView;
 import com.google.gson.Gson;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.EMError;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.exceptions.HyphenateException;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
-import github.ishaan.buttonprogressbar.ButtonProgressBar;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -74,7 +66,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import rx.functions.Action1;
 
-public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements UpdateContract.View  {
+public class UpdateDetailActivity extends BaseMvpActivity<UpdatePresenter> implements UpdateContract.View  {
 
     @BindView(R.id.iv_avater)
     CircleImageView ivAvater;
@@ -88,6 +80,12 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
     @BindView(R.id.once_btn)
     Button bar;
 
+    @BindView(R.id.gender_man)
+    RadioButton manButton;
+
+    @BindView(R.id.gender_girl)
+    RadioButton girlButton;
+
     private String gender;
 
     public PhotoCallBack callBack;
@@ -100,8 +98,6 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
     private static final int CUT_PHOTO_REQUEST_CODE = 2;
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
     private static final String READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
-
-    private String userImage;
 
     private UserUpdateRequest request;
 
@@ -127,13 +123,22 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
 
     private void init() {
 
+        setImageView(SharedPreferencesUtils.getUserImage());
+        editText.setText(SharedPreferencesUtils.getNickName());
+
+        gender = SharedPreferencesUtils.getGender();
+        if (!GenderEnum.MAN.geteDesc().equals(gender)) {
+            manButton.setChecked(false);
+            girlButton.setChecked(true);
+        }
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 int radioButtonId = radioGroup.getCheckedRadioButtonId();//获得按下单选框的ID,并保存在radioButtonId
                 //根据ID获取RadioButton的实例
                 RadioButton rb = (RadioButton)findViewById(radioButtonId);//根据ID将RB和单选框绑定在一起
-                Toast.makeText(OnceActivity.this, rb.getText().toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(UpdateDetailActivity.this, rb.getText().toString(), Toast.LENGTH_LONG).show();
                 gender = rb.getText().toString();
             }
         });
@@ -149,7 +154,7 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
             @Override
             public void onClick(View view) {
                 if (TextUtils.isEmpty(editText.getText())) {
-                    Toast.makeText(OnceActivity.this, "昵称不允许为空", Toast.LENGTH_LONG).show();
+                    Toast.makeText(UpdateDetailActivity.this, "昵称不允许为空", Toast.LENGTH_LONG).show();
                     return;
                 }
                 request = new UserUpdateRequest();
@@ -208,7 +213,7 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
     }
 
     private void startRequestrReadPermision() {
-        RxPermissions.getInstance(OnceActivity.this)
+        RxPermissions.getInstance(UpdateDetailActivity.this)
                 .request(Manifest.permission.READ_EXTERNAL_STORAGE)//多个权限用","隔开
                 .subscribe(new Action1<Boolean>() {
                     @Override
@@ -230,7 +235,7 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
 
     private void startRequestPhotoPermision() {
         //请求多个权限
-        RxPermissions.getInstance(OnceActivity.this)
+        RxPermissions.getInstance(UpdateDetailActivity.this)
                 .request(Manifest.permission.CAMERA,
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)//多个权限用","隔开
@@ -366,44 +371,9 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
 
     @Override
     public void onSuccess(Result result) {
-        //login
-        EMClient.getInstance().login(SharedPreferencesUtils.getTelphone(), SharedPreferencesUtils.getPassword(), new EMCallBack() {
-
-            @Override
-            public void onSuccess() {
-                // ** manually load all local groups and conversation
-                EMClient.getInstance().groupManager().loadAllGroups();
-                EMClient.getInstance().chatManager().loadAllConversations();
-
-                // update current user's display name for APNs
-                boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(editText.getText().toString());
-                if (!updatenick) {
-                    Log.e("LoginActivity", "update current user nick fail");
-                }
-
-                DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
-
-                SharedPreferencesUtils.saveUpdateUser(request);
-                Toast.makeText(OnceActivity.this, "欢迎", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(OnceActivity.this, HomeActivity.class));
-                finish();
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-
-            @Override
-            public void onError(int code, String error) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "login failed", 0).show();
-                    }
-                });
-            }
-        });
-
+        SharedPreferencesUtils.saveUpdateUser(request);
+        Toast.makeText(UpdateDetailActivity.this, "修改成功", Toast.LENGTH_LONG).show();
+        finish();
     }
 
     @Override
@@ -425,6 +395,11 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
         }
+    }
+
+    @OnClick(R.id.back)
+    public void back() {
+        finish();
     }
 
     private void uploadMultiFile(String userImagePath) {
@@ -462,7 +437,7 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
                         fileVO = gson.fromJson(object.getString("result"), FileVO.class);
                         //userImage = fileVO.getOriginName();
                     } else if (code == ErrorCodeEnum.NOT_AUTH.getCode()) {
-                        Intent i = new Intent(OnceActivity.this, MainActivity.class);
+                        Intent i = new Intent(UpdateDetailActivity.this, MainActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(i);
                     }
@@ -472,4 +447,26 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
             }
         });
     }
+
+    public void setImageView(String userImage) {
+        new Thread(new Runnable() {
+            public void run() {
+                setUserImageView(userImage);
+            }
+        }).start();
+    }
+
+    private void setUserImageView(String userImage) {
+
+        try {
+            URL thumb_u = new URL(Constant.url + "/files/" + userImage);
+            Drawable thumb_d = Drawable.createFromStream(thumb_u.openStream(), "src");
+            ivAvater.setImageDrawable(thumb_d);
+        }
+        catch (Exception e) {
+            // handle it
+        }
+    }
+
 }
+

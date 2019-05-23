@@ -326,7 +326,7 @@
     <string name="update_groups_failed" translatable="false">更新群聊失败</string>
 
     <string name="gorup_not_found" translatable="false">找不到这个群组</string>
-    <string name= "no_more_messages" translatable="false">没有更多的消息了</string>
+    <string name="no_more_messages" translatable="false">没有更多的消息了</string>
     <string name="join_public_group" translatable="false">加入公开群</string>
     <string name="chatroom_allow_owner_leave" translatable="false"> 允许聊天室群主离开</string>
     <string name="delete_msg_when_exit_group" translatable="false">退出群组时删除聊天数据</string>

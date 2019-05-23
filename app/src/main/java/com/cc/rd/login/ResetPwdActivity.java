@@ -164,5 +164,6 @@ public class ResetPwdActivity extends BaseMvpActivity<ForgetPwdPresenter> implem
         i.putExtra("password", pwd);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
+        finish();
     }
 }

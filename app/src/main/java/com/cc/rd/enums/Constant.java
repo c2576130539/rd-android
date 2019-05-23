@@ -11,10 +11,10 @@ import com.hyphenate.easeui.EaseConstant;
 
 public class Constant extends EaseConstant {
 
-    public static final String USER_IMAGER = "9E8B59B08CA1BBAF6187A435A5B3A674";
+    public static final String USER_IMAGER = "rdlogo.png";
 
-    //public static final String url = "http://192.168.43.147:8080/files";
-    public static final String url = "http://192.168.2.103:8080/files";
+    //public static final String url = "http://192.168.43.147:8080";
+    public static final String url = "http://192.168.2.105:8080";
 
     public static final String DEFAULT_TELPHONE = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
 
