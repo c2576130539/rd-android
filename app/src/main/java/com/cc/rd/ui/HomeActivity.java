@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cc.rd.login.MainActivity;
+import com.cc.rd.ui.order.OrderFragment;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMClientListener;
 import com.hyphenate.EMContactListener;
@@ -62,6 +63,7 @@ public class HomeActivity extends BaseActivity {
     private TextView unreadAddressLable;
 
     private Button[] mTabs;
+    private OrderFragment orderFragment;
     private ContactListFragment contactListFragment;
     private SettingsFragment settingFragment;
     private Fragment[] fragments;
@@ -115,7 +117,7 @@ public class HomeActivity extends BaseActivity {
             startActivity(new Intent(this, MainActivity.class));
             return;
         }
-        setContentView(R.layout.em_activity_main);
+        setContentView(R.layout.activity_home);
         // runtime permission for android 6.0, just require all permissions here for simple
         requestPermissions();
 
@@ -128,25 +130,36 @@ public class HomeActivity extends BaseActivity {
 
         if (savedInstanceState != null) {
             EMLog.d(TAG, "get fragments from saveInstanceState");
+            orderFragment = (OrderFragment) getSupportFragmentManager().getFragment(savedInstanceState, OrderFragment.class.getSimpleName());
             conversationListFragment = (ConversationListFragment) getSupportFragmentManager().getFragment(savedInstanceState, ConversationListFragment.class.getSimpleName());
             contactListFragment = (ContactListFragment) getSupportFragmentManager().getFragment(savedInstanceState, ContactListFragment.class.getSimpleName());
             settingFragment = (SettingsFragment) getSupportFragmentManager().getFragment(savedInstanceState, SettingsFragment.class.getSimpleName());
-            fragments = new Fragment[]{conversationListFragment, contactListFragment, settingFragment};
+            fragments = new Fragment[]{orderFragment, conversationListFragment, contactListFragment, settingFragment};
             getSupportFragmentManager().beginTransaction()
-                    .show(conversationListFragment)
+                    .show(orderFragment)
+                    .hide(conversationListFragment)
                     .hide(contactListFragment)
                     .hide(settingFragment)
                     .commit();
         } else {
+            orderFragment = new OrderFragment();
             conversationListFragment = new ConversationListFragment();
             contactListFragment = new ContactListFragment();
             settingFragment = new SettingsFragment();
-            fragments = new Fragment[]{conversationListFragment, contactListFragment, settingFragment};
+            fragments = new Fragment[]{orderFragment, conversationListFragment, contactListFragment, settingFragment};
 
+            /*
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, conversationListFragment)
                     .add(R.id.fragment_container, contactListFragment).hide(contactListFragment)
                     .add(R.id.fragment_container, settingFragment).hide(settingFragment)
                     .show(conversationListFragment)
+                    .commit();
+                    */
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, orderFragment)
+                    .add(R.id.fragment_container, conversationListFragment).hide(conversationListFragment)
+                    .add(R.id.fragment_container, contactListFragment).hide(contactListFragment)
+                    .add(R.id.fragment_container, settingFragment).hide(settingFragment)
+                    .show(orderFragment)
                     .commit();
         }
 
@@ -194,10 +207,11 @@ public class HomeActivity extends BaseActivity {
         EMLog.d(TAG, "initView");
         unreadLabel = (TextView) findViewById(R.id.unread_msg_number);
         unreadAddressLable = (TextView) findViewById(R.id.unread_address_number);
-        mTabs = new Button[3];
-        mTabs[0] = (Button) findViewById(R.id.btn_conversation);
-        mTabs[1] = (Button) findViewById(R.id.btn_address_list);
-        mTabs[2] = (Button) findViewById(R.id.btn_setting);
+        mTabs = new Button[4];
+        mTabs[0] = (Button) findViewById(R.id.btn_order);
+        mTabs[1] = (Button) findViewById(R.id.btn_conversation);
+        mTabs[2] = (Button) findViewById(R.id.btn_address_list);
+        mTabs[3] = (Button) findViewById(R.id.btn_setting);
         // select first tab
         mTabs[0].setSelected(true);
     }
@@ -209,14 +223,17 @@ public class HomeActivity extends BaseActivity {
      */
     public void onTabClicked(View view) {
         switch (view.getId()) {
-            case R.id.btn_conversation:
+            case R.id.btn_order:
                 index = 0;
                 break;
-            case R.id.btn_address_list:
+            case R.id.btn_conversation:
                 index = 1;
                 break;
-            case R.id.btn_setting:
+            case R.id.btn_address_list:
                 index = 2;
+                break;
+            case R.id.btn_setting:
+                index = 3;
                 break;
         }
         if (currentTabIndex != index) {
@@ -297,12 +314,12 @@ public class HomeActivity extends BaseActivity {
             public void onReceive(Context context, Intent intent) {
                 updateUnreadLabel();
                 updateUnreadAddressLable();
-                if (currentTabIndex == 0) {
+                if (currentTabIndex == 1) {
                     // refresh conversation list
                     if (conversationListFragment != null) {
                         conversationListFragment.refresh();
                     }
-                } else if (currentTabIndex == 1) {
+                } else if (currentTabIndex == 2) {
                     if(contactListFragment != null) {
                         contactListFragment.refresh();
                     }

@@ -464,4 +464,6 @@
     <string name="alert_request_tobe_talker" translatable="false">请求连麦 &#8230;</string>
     <string name="alert_request_tobe_audience" translatable="false">请求下麦 &#8230;</string>
 
+    <string name="no_result" translatable="false">对不起，没有搜索到相关数据！</string>
+
 </resources>

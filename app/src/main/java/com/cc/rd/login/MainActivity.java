@@ -26,6 +26,7 @@ import com.cc.rd.mvp.contract.login.MainContract;
 import com.cc.rd.custom.LoginEditText;
 import com.cc.rd.mvp.presenter.user.MainPresenter;
 import com.cc.rd.ui.HomeActivity;
+import com.cc.rd.ui.map.NewHomeActivity;
 import com.cc.rd.util.CatpchaUtils;
 import com.cc.rd.util.ErrorCodeEnum;
 import com.cc.rd.util.ExceptionEngine;
@@ -72,7 +73,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (DemoHelper.getInstance().isLoggedIn()) {
-            startActivity(new Intent(this, HomeActivity.class));
+            startActivity(new Intent(this, NewHomeActivity.class));
             finish();
             return;
         }
@@ -222,7 +223,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
                     DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
 
-                    startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                    startActivity(new Intent(MainActivity.this, NewHomeActivity.class));
                     finish();
                 }
 

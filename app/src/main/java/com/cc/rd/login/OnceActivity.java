@@ -36,6 +36,7 @@ import com.cc.rd.enums.GenderEnum;
 import com.cc.rd.mvp.contract.login.UpdateContract;
 import com.cc.rd.mvp.presenter.user.UpdatePresenter;
 import com.cc.rd.ui.HomeActivity;
+import com.cc.rd.ui.map.NewHomeActivity;
 import com.cc.rd.util.ErrorCodeEnum;
 import com.cc.rd.util.ExceptionEngine;
 import com.cc.rd.util.FileUtils;
@@ -385,7 +386,7 @@ public class OnceActivity extends BaseMvpActivity<UpdatePresenter> implements Up
 
                 SharedPreferencesUtils.saveUpdateUser(request);
                 Toast.makeText(OnceActivity.this, "欢迎", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(OnceActivity.this, HomeActivity.class));
+                startActivity(new Intent(OnceActivity.this, NewHomeActivity.class));
                 finish();
             }
 

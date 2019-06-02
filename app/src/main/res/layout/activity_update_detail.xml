@@ -8,15 +8,46 @@
     android:background="@drawable/rd"
     tools:context=".ui.UpdateDetailActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/height_top_bar"
+        android:background="@color/top_bar_normal_bg"
+        android:gravity="center_vertical" >
 
-        <include
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="45dp"
             android:layout_height="match_parent"
-            layout="@layout/back_layout" />
-    </LinearLayout>
+            android:background="@drawable/ease_common_tab_bg"
+            android:onClick="back" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="9dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/em_mm_title_back" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="详细信息"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ease_common_tab_bg"
+            android:onClick="save"
+            android:text="确认"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"

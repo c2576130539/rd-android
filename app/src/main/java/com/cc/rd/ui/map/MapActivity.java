@@ -70,7 +70,7 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
     private AMapLocationClient mlocationClient;
     private AMapLocationClientOption mLocationOption;
 
-    private String[] items = {"住宅区", "学校", "楼宇", "商场" };
+    private String[] items = {"餐饮相关", "购物相关场所", "体育休闲服务场所", "旅游景点" };
 
     private Marker locationMarker;
 
@@ -420,7 +420,7 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
                 if (poiResult.getQuery().equals(query)) {
                     poiItems = poiResult.getPois();
                     if (poiItems != null && poiItems.size() > 0) {
-                        updateListview(poiItems);
+                            updateListview(poiItems);
                     } else {
                         Toast.makeText(MapActivity.this, "无搜索结果", Toast.LENGTH_SHORT).show();
                     }
@@ -477,6 +477,8 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
                             intent.putExtra("address", poiItem.getTitle());
                             intent.putExtra("longitude", poiItem.getLatLonPoint().getLongitude());
                             intent.putExtra("latitude", poiItem.getLatLonPoint().getLatitude());
+                            intent.putExtra("adcode", poiItem.getAdCode());
+                            intent.putExtra("area", poiItem.getCityCode());
                             setResult(1, intent);
                             finish();
                         }
@@ -622,6 +624,8 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
                         intent.putExtra("address", poiItem.getTitle());
                         intent.putExtra("longitude", poiItem.getLatLonPoint().getLongitude());
                         intent.putExtra("latitude", poiItem.getLatLonPoint().getLatitude());
+                        intent.putExtra("adcode", poiItem.getAdCode());
+                        intent.putExtra("area", poiItem.getCityCode());
                         setResult(1, intent);
                         finish();
                     }

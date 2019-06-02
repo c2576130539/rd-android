@@ -1,10 +1,12 @@
 package com.cc.rd.ui;
 
+import com.cc.rd.bean.OrderItem;
 import com.cc.rd.bean.vo.UserLoginVo;
 import com.cc.rd.enums.Constant;
 import com.cc.rd.enums.GenderEnum;
 import com.cc.rd.login.MainActivity;
 import com.cc.rd.ui.order.CreateOrderActivity;
+import com.cc.rd.ui.order.OrderActivity;
 import com.cc.rd.util.ErrorCodeEnum;
 import com.cc.rd.util.ParamUtils;
 import com.cc.rd.util.SharedPreferencesUtils;
@@ -50,17 +52,17 @@ import okhttp3.Response;
 
 public class SettingsFragment extends Fragment{
 
-    private String telphone;
-    private String nickname;
-    private String gender;
-    private String userImage;
+    String telphone;
+    String nickname;
+    String gender;
+    String userImage;
 
-    private TextView money;
-    private TextView credit;
-    private TextView userNickname;
-    private TextView userTel;
-    private ImageView hBack;
-    private CircleImageView hHead;
+    TextView money;
+    TextView credit;
+    TextView userNickname;
+    TextView userTel;
+    ImageView hBack;
+    CircleImageView hHead;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -127,7 +129,7 @@ public class SettingsFragment extends Fragment{
         setting.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), CreateOrderActivity.class));
+                startActivity(new Intent(getActivity(), OrderActivity.class));
             }
         });
 
@@ -140,13 +142,18 @@ public class SettingsFragment extends Fragment{
         nickname = SharedPreferencesUtils.getNickName();
         gender = SharedPreferencesUtils.getGender();
 
-        setImageView(userImage);
-
         if (userLoginVo != null) {
-            money.setText(userLoginVo.getMoney());
+            setImageView(userLoginVo.getUserImage());
+        } else {
+            setImageView(userImage);
         }
+
+
         if (null != userLoginVo) {
+
             credit.setText(userLoginVo.getCredit());
+
+            money.setText(userLoginVo.getMoney());
 
             if (GenderEnum.MAN.geteDesc().equals(userLoginVo.getGender())) {
                 userNickname.setText(userLoginVo.getNickName() + " ♂");
@@ -191,8 +198,8 @@ public class SettingsFragment extends Fragment{
                         Gson gson = new Gson();
                         UserLoginVo userLoginVo = gson.fromJson(object.getString("result"), UserLoginVo.class);
                         //设值
-                        dataInit(userLoginVo);
                         SharedPreferencesUtils.saveUserData(userLoginVo);
+                        dataInit(userLoginVo);
                     } else if (code == ErrorCodeEnum.NOT_AUTH.getCode()) {
                         Intent i = new Intent(getActivity(), MainActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

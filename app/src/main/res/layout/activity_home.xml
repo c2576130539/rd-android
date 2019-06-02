@@ -1,19 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.HomeActivity">
+    android:background="@color/common_bg" >
 
     <LinearLayout
         android:id="@+id/main_bottom"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:background="@color/bottom_bar_normal_bg"
         android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        tools:ignore="DisableBaselineAlignment">
+
+        <RelativeLayout
+            android:id="@+id/btn_container_order"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/btn_order"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/em_main_bottom_item_bg"
+
+                android:onClick="onTabClicked"
+                android:paddingBottom="2dip"
+                android:paddingTop="7dip"
+                android:scaleType="matrix"
+                android:text="活动"
+                android:textColor="@color/em_main_botton_text_color"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/btn_container_conversation"
@@ -44,7 +67,6 @@
                 android:layout_marginTop="1dp"
                 android:background="@drawable/em_unread_count_bg"
                 android:gravity="center"
-                android:text="7"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
                 android:visibility="invisible" />
@@ -70,6 +92,14 @@
                 android:textColor="@color/em_main_botton_text_color"
                 android:textSize="12sp" />
 
+            <TextView
+                android:id="@+id/unread_address_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/em_unread_dot"
+                android:visibility="visible" />
         </RelativeLayout>
 
         <RelativeLayout

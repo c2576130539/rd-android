@@ -6,7 +6,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.cc.rd"
-        minSdkVersion 19
+        minSdkVersion 24
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -88,4 +88,5 @@ dependencies {
     //kotlin
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.71'
     implementation files('libs/AMap3DMap_6.8.0_AMapNavi_6.7.0_AMapSearch_6.5.0_AMapLocation_4.6.0_20190423.jar')
+    implementation project(path: ':pickerview')
 }

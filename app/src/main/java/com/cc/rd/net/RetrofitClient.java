@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.cc.rd.BuildConfig;
 import com.cc.rd.MyApplication;
 import com.cc.rd.custom.ResponseConverterFactory;
+import com.cc.rd.util.ParamUtils;
 import com.cc.rd.util.SharedPreferencesUtils;
 
 import java.io.IOException;
@@ -45,11 +46,17 @@ public class RetrofitClient {
             @Override
             public Response intercept(@NonNull Chain chain) throws IOException {
                 Request original = chain.request();
-                Request.Builder requestBuilder = original.newBuilder()
-                        //添加Token
-                        .header("Authorization", SharedPreferencesUtils.getToken());
-                Request request = requestBuilder.build();
-                return chain.proceed(request);
+                if (ParamUtils.isEmpty(SharedPreferencesUtils.getToken())) {
+                    Request.Builder requestBuilder = original.newBuilder();
+                    Request request = requestBuilder.build();
+                    return chain.proceed(request);
+                } else {
+                    Request.Builder requestBuilder = original.newBuilder()
+                            //添加Token
+                            .header("Authorization", SharedPreferencesUtils.getToken());
+                    Request request = requestBuilder.build();
+                    return chain.proceed(request);
+                }
             }
         };
 

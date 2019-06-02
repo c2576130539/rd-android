@@ -54,7 +54,7 @@ public class SharedPreferencesUtils {
      */
     public static String getNickName() {
         SharedPreferences sp = context.getSharedPreferences("user_data", Context.MODE_PRIVATE);
-        String nickName = sp.getString("nickName", null);
+        String nickName = sp.getString("nickname", null);
         return nickName;
     }
 

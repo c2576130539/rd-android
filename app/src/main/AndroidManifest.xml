@@ -41,7 +41,11 @@
         android:roundIcon="@drawable/rd"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.map.MapActivity"></activity>
+        <activity android:name=".ui.map.BusRouteDetailActivity"></activity>
+        <activity android:name=".ui.map.BusRouteActivity" />
+        <activity android:name=".ui.map.NewHomeActivity" />
+        <activity android:name=".ui.order.OrderActivity" />
+        <activity android:name=".ui.map.MapActivity" />
         <activity android:name=".ui.order.CreateOrderActivity" />
         <activity android:name=".ui.UpdateDetailActivity" />
         <activity android:name=".ui.UpdateUserActivity" />
@@ -233,7 +237,7 @@
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="d8f8dbc3ae302801964e0950ed17fb9f"></meta-data>
+            android:value="d8f8dbc3ae302801964e0950ed17fb9f" />
     </application>
 
 </manifest>

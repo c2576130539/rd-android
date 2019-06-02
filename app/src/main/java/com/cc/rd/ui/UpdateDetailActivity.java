@@ -83,7 +83,6 @@ public class UpdateDetailActivity extends BaseMvpActivity<UpdatePresenter> imple
     @BindView(R.id.gender_man)
     RadioButton manButton;
 
-    @BindView(R.id.gender_girl)
     RadioButton girlButton;
 
     private String gender;
@@ -105,7 +104,7 @@ public class UpdateDetailActivity extends BaseMvpActivity<UpdatePresenter> imple
 
     @Override
     public int getLayoutId() {
-        return R.layout.activity_once;
+        return R.layout.activity_update_detail;
     }
 
     @Override
@@ -123,6 +122,8 @@ public class UpdateDetailActivity extends BaseMvpActivity<UpdatePresenter> imple
 
     private void init() {
 
+        girlButton = (RadioButton) findViewById(R.id.gender_girl);
+
         setImageView(SharedPreferencesUtils.getUserImage());
         editText.setText(SharedPreferencesUtils.getNickName());
 
@@ -134,12 +135,17 @@ public class UpdateDetailActivity extends BaseMvpActivity<UpdatePresenter> imple
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                int radioButtonId = radioGroup.getCheckedRadioButtonId();//获得按下单选框的ID,并保存在radioButtonId
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                //int radioButtonId = radioGroup.getCheckedRadioButtonId();//获得按下单选框的ID,并保存在radioButtonId
                 //根据ID获取RadioButton的实例
-                RadioButton rb = (RadioButton)findViewById(radioButtonId);//根据ID将RB和单选框绑定在一起
-                Toast.makeText(UpdateDetailActivity.this, rb.getText().toString(), Toast.LENGTH_LONG).show();
-                gender = rb.getText().toString();
+                //RadioButton rb = (RadioButton)findViewById(radioButtonId);//根据ID将RB和单选框绑定在一起
+                if (checkedId == R.id.gender_man) {
+                    Toast.makeText(UpdateDetailActivity.this, GenderEnum.MAN.getcDesc(), Toast.LENGTH_LONG).show();
+                    gender = GenderEnum.MAN.getcDesc();
+                } else {
+                    Toast.makeText(UpdateDetailActivity.this, GenderEnum.GIRL.getcDesc(), Toast.LENGTH_LONG).show();
+                    gender = GenderEnum.GIRL.getcDesc();
+                }
             }
         });
 
@@ -397,11 +403,6 @@ public class UpdateDetailActivity extends BaseMvpActivity<UpdatePresenter> imple
         }
     }
 
-    @OnClick(R.id.back)
-    public void back() {
-        finish();
-    }
-
     private void uploadMultiFile(String userImagePath) {
         String imageType = "multipart/form-data";
         File file = new File(userImagePath);//imgUrl为图片位置
@@ -466,6 +467,26 @@ public class UpdateDetailActivity extends BaseMvpActivity<UpdatePresenter> imple
         catch (Exception e) {
             // handle it
         }
+    }
+
+    public void save(View v) {
+        if (TextUtils.isEmpty(editText.getText())) {
+            Toast.makeText(UpdateDetailActivity.this, "昵称不允许为空", Toast.LENGTH_LONG).show();
+            return;
+        }
+        request = new UserUpdateRequest();
+        request.setGender(GenderEnum.findByCDesc(gender) == null ? GenderEnum.GIRL.getCode(): GenderEnum.findByCDesc(gender).getCode());
+        request.setNickName(editText.getText().toString());
+        if (fileVO == null) {
+            request.setUserImage(Constant.USER_IMAGER);
+        } else {
+            request.setUserImage(fileVO.getOriginName());
+        }
+        mPresenter.changeUserImage(request);
+    }
+
+    public void back(View view) {
+        finish();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.cc.rd.net;
 
 import com.cc.rd.bean.JSONResult;
+import com.cc.rd.bean.request.order.OrderAddRequest;
 import com.cc.rd.bean.request.user.UserUpdateRequest;
 import com.cc.rd.bean.vo.CaptchaVO;
 import com.cc.rd.bean.vo.UserLoginVo;
@@ -11,6 +12,7 @@ import com.cc.rd.bean.request.user.UserAddRequest;
 import com.cc.rd.util.Result;
 
 import io.reactivex.Flowable;
+import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -55,5 +57,6 @@ public interface APIService {
     @PUT("/users")
     Flowable<Result> changeUserImage(@Body UserUpdateRequest request);
 
-
+    @POST("/orders")
+    Flowable<Result> addOrder(@Body OrderAddRequest request);
 }

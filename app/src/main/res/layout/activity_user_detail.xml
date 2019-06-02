@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="余额"
-                    android:textSize="@dimen/adaptive_25sp"
+                    android:textSize="@dimen/adaptive_15sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -104,7 +104,7 @@
                     android:layout_gravity="center"
                     android:gravity="right"
                     android:text="0.00"
-                    android:textSize="@dimen/adaptive_25sp"
+                    android:textSize="@dimen/adaptive_15dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="信用积分"
-                    android:textSize="@dimen/adaptive_25sp"
+                    android:textSize="@dimen/adaptive_15dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -134,7 +134,7 @@
                     android:layout_gravity="center"
                     android:gravity="right"
                     android:text="100"
-                    android:textSize="@dimen/adaptive_25sp"
+                    android:textSize="@dimen/adaptive_15dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -155,7 +155,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="个人信息"
-                    android:textSize="@dimen/adaptive_25sp"
+                    android:textSize="@dimen/adaptive_15dp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -189,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="设置"
-                    android:textSize="@dimen/adaptive_25sp"
+                    android:textSize="@dimen/adaptive_15dp"
                     android:textStyle="bold" />
 
                 <LinearLayout
